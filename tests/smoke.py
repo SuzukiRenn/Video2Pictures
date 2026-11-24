@@ -16,7 +16,7 @@ def verify_archive(archive: Path) -> None:
     for key in ("PYTHONHOME", "PYTHONPATH", "TCL_LIBRARY", "TK_LIBRARY", "DYLD_LIBRARY_PATH"):
         environment.pop(key, None)
     if sys.platform == "win32":
-        system = Path(environment["SystemRoot"])
+        system = Path(os.environ["SystemRoot"])
         environment["PATH"] = os.pathsep.join(map(str, (system / "System32", system)))
     else:
         environment["PATH"] = "/usr/bin:/bin:/usr/sbin:/sbin"
