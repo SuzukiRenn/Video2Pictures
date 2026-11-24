@@ -13,12 +13,12 @@ VIDEO_SIZE = (48, 32)
 COLORS = ((220, 30, 42), (14, 210, 44), (19, 35, 225), (215, 167, 30), (125, 72, 205))
 
 
-def make_video(path: Path) -> Path:
+def make_video(path: Path, colors=COLORS) -> Path:
     with av.open(str(path), "w") as container:
         stream = container.add_stream("ffv1", rate=25)
         stream.width, stream.height = VIDEO_SIZE
         stream.pix_fmt = "bgr0"
-        for color in COLORS:
+        for color in colors:
             frame = av.VideoFrame.from_image(Image.new("RGB", VIDEO_SIZE, color))
             container.mux(stream.encode(frame))
         container.mux(stream.encode())

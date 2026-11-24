@@ -24,6 +24,13 @@ SOURCE_TYPES = [
     ("所有文件", "*"),
 ]
 
+FRAME_MODES = {
+    "all": ("全部帧", ""),
+    "uniform": ("均匀抽取", "张数"),
+    "ranges": ("指定帧号 / 范围", "如 1,3-5"),
+    "stride": ("每 N 帧取 1 张", "N（帧）"),
+}
+
 
 def create_root() -> tk.Tk:
     if sys.platform == "win32":
@@ -148,7 +155,7 @@ class Application:
         modes = ttk.Frame(options, style="Plain.TFrame")
         modes.grid(row=1, column=0, columnspan=2, sticky="w", pady=(pad(6), pad(7)))
         self.radios = []
-        for column, (label, value) in enumerate((("全部帧", "all"), ("均匀抽取", "uniform"), ("指定帧号 / 范围", "ranges"))):
+        for column, (value, (label, _)) in enumerate(FRAME_MODES.items()):
             radio = ttk.Radiobutton(modes, text=label, value=value, variable=self.mode, command=self._change_mode)
             radio.grid(row=0, column=column, sticky="w", padx=(0, pad(17)))
             self.radios.append(radio)
@@ -245,7 +252,7 @@ class Application:
             self.value_label.grid_remove()
             self.value_entry.grid_remove()
         else:
-            self.value_label.configure(text="张数" if mode == "uniform" else "如 1,3-5")
+            self.value_label.configure(text=FRAME_MODES[mode][1])
             self.value_label.grid()
             self.value_entry.grid()
         self.action.configure(text="取消" if busy else "导出图片", style="TButton" if busy else "Action.TButton")

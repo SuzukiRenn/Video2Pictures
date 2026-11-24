@@ -35,6 +35,25 @@ class MediaTests(unittest.TestCase):
                 self.assertEqual((image.format, image.mode, image.size), ("PNG", "RGB", VIDEO_SIZE))
                 self.assertEqual(image.getpixel((15, 16)), COLORS[number - 1])
 
+    def test_stride_exports_original_frames_from_video_and_dicom(self):
+        video_colors = [(value, 42, 84) for value in range(1, 10)]
+        gray_frames = np.repeat(np.arange(1, 10, dtype=np.uint8)[:, None, None], 2, axis=2)
+        for path, pixels in (
+            (make_video(self.root / "stride.mkv", video_colors), video_colors),
+            (make_dicom(self.root / "stride.dcm", gray_frames), list(range(1, 10))),
+        ):
+            with self.subTest(path=path):
+                source = inspect_source(path)
+                self.assertEqual(source.total, 9)
+                plan = select_frames(source.total, "stride", "3")
+                output = self.output / path.suffix[1:]
+                self.assertEqual(export_frames(source, output, plan), 3)
+                self.assertEqual(sorted(item.name for item in output.iterdir()),
+                                 ["frame_000001.png", "frame_000004.png", "frame_000007.png"])
+                for number in (1, 4, 7):
+                    with Image.open(output / f"frame_{number:06d}.png") as image:
+                        self.assertEqual(image.getpixel((0, 0)), pixels[number - 1])
+
     def test_jpeg_and_concurrent_exports_keep_existing_files(self):
         source = inspect_source(make_video(self.root / "video.mkv"))
         plan = select_frames(source.total, "ranges", "2")

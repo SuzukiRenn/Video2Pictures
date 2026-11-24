@@ -24,6 +24,20 @@ class SelectionTests(unittest.TestCase):
         self.assertEqual(plan.count, 8)
         self.assertEqual(list(select_frames(1, "ranges", "1-1")), [1])
 
+    def test_stride_starts_at_one_and_includes_only_aligned_frames(self):
+        for total, step, expected in (
+            (9, " 3 ", [1, 4, 7]),
+            (9, "4", [1, 5, 9]),
+            (5, "1", [1, 2, 3, 4, 5]),
+            (5, "5", [1]),
+            (5, "6", [1]),
+            (1, "100", [1]),
+        ):
+            with self.subTest(total=total, step=step):
+                plan = select_frames(total, "stride", step)
+                self.assertEqual(list(plan), expected)
+                self.assertEqual(plan.count, len(expected))
+
     def test_large_ranges_remain_compact(self):
         plan = select_frames(10**9, "ranges", "1-1000000000")
         self.assertEqual(plan.count, 10**9)
@@ -34,6 +48,7 @@ class SelectionTests(unittest.TestCase):
         for mode, values in (
             ("uniform", ["", "0", "11", "1.2", "-1", "x"]),
             ("ranges", ["", "0", "11", "3-2", "1--2", "1,", "1, ,4", "a", "9-11"]),
+            ("stride", ["", "0", "1.2", "-1", "2-4", "x"]),
         ):
             for value in values:
                 with self.subTest(mode=mode, value=value), self.assertRaises(ValueError):

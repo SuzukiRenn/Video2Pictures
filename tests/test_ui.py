@@ -29,6 +29,9 @@ class ApplicationTests(unittest.TestCase):
             sleep(0.01)
         self.assertIsNone(self.app.job)
 
+    def choose_radio(self, value):
+        next(radio for radio in self.app.radios if radio.cget("value") == value).invoke()
+
     def test_recover_from_bad_source_and_invalid_range_then_export(self):
         invalid = self.directory / "broken.mp4"
         invalid.write_bytes(b"broken")
@@ -46,14 +49,38 @@ class ApplicationTests(unittest.TestCase):
 
         with patch("video2pictures.ui.filedialog.askdirectory", return_value=str(self.directory)):
             self.app.choose_output.invoke()
-        self.app.radios[2].invoke()
+        self.choose_radio("ranges")
         self.app.value.set("7")
         self.app.action.invoke()
         self.assertEqual(self.app.status.get(), "请检查帧选择")
         self.app.value.set("1,4-5")
-        self.app.radios[4].invoke()
+        self.choose_radio("JPEG")
         self.app.action.invoke()
         self.wait_for_job()
         self.assertEqual(self.app.status.get(), "已导出 3 张图片")
         self.assertEqual(sorted(path.name for path in self.directory.glob("frame_*.jpg")),
                          ["frame_000001.jpg", "frame_000004.jpg", "frame_000005.jpg"])
+
+    def test_stride_previews_count_and_recovers_from_invalid_input(self):
+        self.app.load(make_video(self.directory / "video.mkv"))
+        self.wait_for_job()
+        self.choose_radio("stride")
+        self.assertEqual(self.app.value_label.cget("text"), "N（帧）")
+
+        self.app.value.set("1")
+        self.assertEqual(self.app.selection_info.get(), "将导出 5 张")
+        self.app.value.set("6")
+        self.assertEqual(self.app.selection_info.get(), "将导出 1 张")
+        self.app.value.set("0")
+        self.assertEqual(self.app.selection_info.get(), "")
+        self.app.action.invoke()
+        self.assertEqual(self.app.status.get(), "请检查帧选择")
+        self.assertIn("N 必须是正整数", self.app.detail.get())
+
+        self.app.value.set("3")
+        self.assertEqual(self.app.selection_info.get(), "将导出 2 张")
+        self.app.action.invoke()
+        self.wait_for_job()
+        self.assertEqual(self.app.status.get(), "已导出 2 张图片")
+        output = self.directory / "video_frames"
+        self.assertEqual(sorted(path.name for path in output.iterdir()), ["frame_000001.png", "frame_000004.png"])

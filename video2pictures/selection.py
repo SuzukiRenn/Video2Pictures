@@ -41,6 +41,13 @@ def select_frames(total: int, mode: str, value: str = "") -> FramePlan:
         if not 1 <= count <= total:
             raise ValueError(message)
         return FramePlan(total, count)
+    if mode == "stride":
+        message = "每 N 帧取 1 张时，N 必须是正整数。"
+        step = _number(value.strip(), message)
+        if step == 0:
+            raise ValueError(message)
+        frames = range(1, total + 1, step)
+        return FramePlan(total, len(frames), (frames,))
     if mode != "ranges":
         raise ValueError("请选择帧选择方式。")
 
