@@ -34,7 +34,7 @@ python -m video2pictures
 python -m unittest discover -v
 ```
 
-在目标系统与架构上安装打包依赖，再构建并验证 ZIP。
+在目标系统与架构上使用 CI 锁定的 Python 3.14.6 安装打包依赖，再构建并验证 ZIP。
 
 ```sh
 python -m pip install --only-binary=:all: -r requirements-build.txt

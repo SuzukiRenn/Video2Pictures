@@ -32,11 +32,12 @@ def verify_archive(archive: Path) -> None:
             executable = work / "Video2Pictures" / "Video2Pictures.exe"
             notices = executable.parent / "_internal" / "third-party"
 
+        tcl_tk_version = "8.6.15" if sys.platform == "win32" else "9.0.3"
         for document in (
             "README.md",
             "licenses/CPython-3.14.6/LICENSE",
-            "licenses/Tcl-Tk/tcl-8.6.15.terms" if sys.platform == "win32" else "licenses/Tcl-Tk/tcl-9.0.3.terms",
-            "licenses/Tcl-Tk/tk-8.6.15.terms" if sys.platform == "win32" else "licenses/Tcl-Tk/tk-9.0.3.terms",
+            f"licenses/Tcl-Tk/tcl-{tcl_tk_version}.terms",
+            f"licenses/Tcl-Tk/tk-{tcl_tk_version}.terms",
             "licenses/FFmpeg/COPYING.LGPLv3",
             "licenses/FFmpeg-dependencies/x264.txt",
             "licenses/FFmpeg-dependencies/x265.txt",
@@ -46,7 +47,8 @@ def verify_archive(archive: Path) -> None:
             "wheel-notices/pydicom-3.0.2/LICENSE",
             "wheel-notices/PyInstaller-6.22.3/COPYING.txt",
         ):
-            if not (notices / document).is_file() or (notices / document).stat().st_size < 200:
+            path = notices / document
+            if not path.is_file() or path.stat().st_size < 200:
                 raise AssertionError(f"Missing third-party notice: {document}")
         print("Third-party notices verified in the extracted package")
 

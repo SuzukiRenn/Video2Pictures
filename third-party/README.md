@@ -30,4 +30,6 @@ Windows x64 随包 DLL 的实测记录如下。
 | x264 | [构建脚本指定的提交归档](https://code.videolan.org/videolan/x264/-/archive/b35605ace3ddf7c1a5d67a2eb553f034aef41d55/x264-b35605ace3ddf7c1a5d67a2eb553f034aef41d55.tar.bz2) · `6eeb82934e69fd51e043bd8c5b0d152839638d1ce7aa4eea65a3fedcf83ff224` |
 | x265 4.1 | [官方源码归档](https://bitbucket.org/multicoreware/x265_git/downloads/x265_4.1.tar.gz) · `a31699c6a89806b74b0151e5e6a7df65de4b49050482fe5ebf8a4379d7af8f29` |
 
-同一锁定脚本的 `codec_group` 列出了 LAME、Ogg、Opus、Speex、Vorbis、dav1d、SVT-AV1、libvpx、libpng、libwebp、OpenH264、OpenCORE AMR 等组件的来源和校验值。Windows x64 还使用脚本所列的 Intel VPL、NV Codec Headers、AMF Headers，以及从 [MSYS2 MinGW-w64 的包仓库](https://repo.msys2.org/mingw/mingw64/)取得的 GCC 运行库、libiconv、winpthreads 和 zlib。该版本的构建配方没有为这四种 MSYS2 运行库分别固定包版本。
+同一锁定脚本的 `codec_group` 列出了 LAME、Ogg、Opus、Speex、Vorbis、dav1d、SVT-AV1、libvpx、libpng、libwebp、OpenH264、OpenCORE AMR 等组件的来源和校验值。其许可文本位于 `licenses/FFmpeg-dependencies`。Windows x64 还使用脚本所列的 Intel VPL、NV Codec Headers、AMF Headers。
+
+FFmpeg 在 Windows 上带有来自 [MSYS2 MinGW-w64 包仓库](https://repo.msys2.org/mingw/mingw64/)的 GCC 运行库、libiconv、winpthreads 和 zlib。实测捆绑的 DLL 报告 [libiconv 1.18](https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.18.tar.gz) 和 [zlib 1.3.1](https://github.com/madler/zlib/tree/v1.3.1)。构建配方未分别锁定 GCC 和 winpthreads 的 MSYS2 包版本。`licenses/Windows-FFmpeg-runtime` 收录 [GCC 运行库例外条款](https://gcc.gnu.org/onlinedocs/libstdc++/manual/license.html)、[winpthreads 版权文本](https://github.com/mingw-w64/mingw-w64/blob/v13.0.0/mingw-w64-libraries/winpthreads/COPYING)及 libiconv、zlib 许可。
