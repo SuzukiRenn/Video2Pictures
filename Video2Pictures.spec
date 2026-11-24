@@ -2,10 +2,15 @@ import sys
 from pathlib import Path
 
 root = Path(SPECPATH)
+sys.path.insert(0, str(root))
+from scripts.notices import bundled_notices
+
 analysis = Analysis(
     [str(root / "video2pictures" / "__main__.py")],
     pathex=[str(root)],
 )
+analysis.datas += Tree(str(root / "third-party"), prefix="third-party")
+analysis.datas += bundled_notices(analysis.binaries)
 name = "Video2Pictures"
 executable = EXE(
     PYZ(analysis.pure),

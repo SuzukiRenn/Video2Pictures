@@ -6,6 +6,8 @@
 
 从 [GitHub Releases](https://github.com/SuzukiRenn/Video2Pictures/releases) 下载并解压对应的 ZIP。Windows x64 打开 `Video2Pictures.exe`，并将 `_internal` 留在同一个文件夹内。macOS 选 `macos-arm64`（Apple Silicon）或 `macos-x64`（Intel），打开 `Video2Pictures.app`。macOS 构建使用临时签名，尚未做 Apple 公证，首次打开时系统可能拦截。
 
+安装包随附许可文本和[第三方组件来源说明](third-party/README.md)。
+
 选择源文件后等待帧数出现。默认输出到源文件旁的 `<文件名>_frames`，也可选其他目录。帧号从 1 开始。
 
 - **全部帧**导出所有帧。
